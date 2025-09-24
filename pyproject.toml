@@ -13,6 +13,10 @@ dependencies = [
     "litellm>=1.77.0",
 ]
 
+[tool.setuptools]
+packages = ["find:"]
+package-dir = {"" = "src"}
+
 [project.optional-dependencies]
 dev = [
     
