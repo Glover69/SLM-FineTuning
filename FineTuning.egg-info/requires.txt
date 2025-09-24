@@ -1,0 +1,5 @@
+colorama>=0.4.6
+docling>=2.51.0
+litellm>=1.77.0
+
+[dev]

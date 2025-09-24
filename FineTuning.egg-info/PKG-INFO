@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: FineTuning
+Version: 0.1.0
+Summary: Test
+Requires-Python: >=3.11
+Requires-Dist: colorama>=0.4.6
+Requires-Dist: docling>=2.51.0
+Requires-Dist: litellm>=1.77.0
+Provides-Extra: dev

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "FineTuning"
+version = "0.1.0"
+description = "Test"
+requires-python = ">=3.11"
+dependencies = [
+    "colorama>=0.4.6",
+    "docling>=2.51.0",
+    "litellm>=1.77.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    
+]
