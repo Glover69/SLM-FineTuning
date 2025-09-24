@@ -18,6 +18,20 @@ def chunk_extraction_prompt(data: str, case_id: str, pages: str = "") -> str:
       "reasoning": ["court’s reasoning …"],
       "orders": ["order/disposition …"],
       "parties": {{"plaintiffs": [], "defendants": [], "judges": []}},
+      "court": "name of court …",
+      "jurisdiction": "…",
+      "neutral_citation": "…",
+      "case_number": "…",
+      "decision_date": "YYYY-MM-DD",
+      "hearing_dates": ["YYYY-MM-DD"],
+      "counsel": {{"for_plaintiff": [], "for_defendant": [], "amicus": []}},
+      "standards_of_review": ["…"],
+      "statutes": ["Act/section … [para/page]"],
+      "constitutional_provisions": ["Article/section … [para/page]"],
+      "ratio": ["… [para/page]"],
+      "obiter": ["… [para/page]"],
+      "opinions": {{"majority": [], "concurring": [], "dissenting": []}},
+      "remedies": {{"relief": ["…"], "damages": null, "costs": null}},
       "citations": ["case/statute citation …"],
       "entities": ["person/org/place …"],
       "timeline": [{{"date":"YYYY-MM-DD","event":"…","source":"[para/page]"}}],
@@ -42,12 +56,26 @@ def case_synthesis_prompt(extracted_chunks_json: str, case_id: str) -> str:
       "case_id": "{case_id}",
       "headnote": "150–250 words; who/what/why/how/holding; neutral; no fluff.",
       "parties": {{"plaintiffs": [], "defendants": [], "judges": []}},
+      "court": "…",
+      "jurisdiction": "…",
+      "neutral_citation": "…",
+      "case_number": "…",
+      "decision_date": "YYYY-MM-DD",
+      "hearing_dates": ["YYYY-MM-DD"],
+      "counsel": {{"for_plaintiff": [], "for_defendant": [], "amicus": []}},
       "facts": ["…"],
       "procedural_history": ["…"],
       "issues": ["…"],
       "holdings": ["…"],
       "rules": ["…"],
       "reasoning": ["…"],
+      "standards_of_review": ["…"],
+      "statutes": ["…"],
+      "constitutional_provisions": ["…"],
+      "ratio": ["…"],
+      "obiter": ["…"],
+      "opinions": {{"majority": [], "concurring": [], "dissenting": []}},
+      "remedies": {{"relief": ["…"], "damages": null, "costs": null}},
       "orders": ["…"],
       "citations": ["…"],
       "entities": ["…"],
@@ -62,6 +90,7 @@ def case_synthesis_prompt(extracted_chunks_json: str, case_id: str) -> str:
     Requirements:
     - Deduplicate and reconcile names; sort timeline chronologically.
     - Keep only facts present in the chunks; include sources like [para n] or page ranges.
+    - Populate court/date/citation/standards/statutes/ratio/obiter/counsel/opinions/remedies when and only when present; otherwise null/[] as appropriate.
     - No extra commentary outside JSON.
 
     Chunks:
@@ -71,7 +100,7 @@ def case_synthesis_prompt(extracted_chunks_json: str, case_id: str) -> str:
 def qa_from_case_prompt(structured_case_json: str, n: int = 15) -> str:
     return dedent(f"""
     Create {n} diverse, short Q&A pairs strictly grounded in the structured case JSON.
-    Mix: facts, procedure, issues, holdings, rules, orders, timeline. Include a [source] like [para n] when possible.
+    Mix: facts, procedure, issues, holdings, rules, reasoning, standards of review, statutes/constitutional provisions, orders/remedies/disposition, court/date/citation, parties/counsel, opinions (majority/concurring/dissent), timeline. Include a [source] like [para n] when possible.
 
     Output strict JSON array:
     [{{"question":"…","answer":"…","source":"[para/page]"}}]
@@ -91,7 +120,12 @@ def answer_question_prompt(question: str, structured_case_json: str) -> str:
     {{
       "answer": "...",
       "support": ["exact quote … [para/page]"],
-      "fields_consulted": ["facts","issues","holdings","rules","procedural_history","timeline","orders","citations","parties","key_quotes"],
+      "fields_consulted": [
+        "headnote","facts","issues","holdings","rules","reasoning",
+        "procedural_history","timeline","orders","disposition","citations","parties","key_quotes","summary_irac",
+        "court","jurisdiction","neutral_citation","case_number","decision_date","hearing_dates",
+        "counsel","standards_of_review","statutes","constitutional_provisions","ratio","obiter","opinions","remedies"
+      ],
       "confidence": 0.0
     }}
 
